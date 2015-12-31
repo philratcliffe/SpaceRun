@@ -3,9 +3,16 @@
 #include "Map.hpp"
 #include "Engine.hpp"
 
+static const int SCREEN_WIDTH = 80;
+static const int SCREEN_HEIGHT = 50;
+
 Engine::Engine() {
-    TCODConsole::initRoot(80,50, "Space Run", false);
-    m_playerColor = TCODColor::green; player = new Actor(40,25,'@', m_playerColor);
+    // Create the game window.
+    bool startFullScreen = false;
+    TCODConsole::initRoot(SCREEN_WIDTH, SCREEN_HEIGHT, "Space Run", startFullScreen);
+
+    m_playerColor = TCODColor::lightestGreen; 
+    player = new Actor(40,25,'@', m_playerColor);
     actors.push(player);
     map = new Map(80,45);
     TCODSystem::setFps(20);
@@ -18,29 +25,31 @@ Engine::~Engine() {
 
 void Engine::update() {
     TCOD_key_t key;
+
     TCODSystem::checkForEvent(TCOD_EVENT_KEY_PRESS,&key,NULL);
-    switch(key.vk) {
-        case TCODK_UP :
-            if ( ! map->isWall(player->x,player->y-1)) {
-                player->y--;  
-            }
-        break;
-        case TCODK_DOWN :
-            if ( ! map->isWall(player->x,player->y+1)) {
-                player->y++;
-            }
-        break;
-        case TCODK_LEFT :
-            if ( ! map->isWall(player->x-1,player->y)) {
-                player->x--;
-            }
-        break;
-        case TCODK_RIGHT :
-            if ( ! map->isWall(player->x+1,player->y)) {
-                player->x++;
-            }
-        break;
-        default:break;
+    if (key.vk == TCODK_UP || key.c == 'k')
+    {
+        if ( ! map->isWall(player->x,player->y-1)) {
+            player->y--; 
+        }
+    }
+    else if (key.vk == TCODK_DOWN || key.c == 'j')
+    {
+        if ( ! map->isWall(player->x,player->y+1)) {
+            player->y++;
+        }
+    }
+    else if (key.vk == TCODK_LEFT || key.c == 'h')
+    {
+        if ( ! map->isWall(player->x-1,player->y)) {
+            player->x--;
+        }
+    }
+    else if (key.vk == TCODK_RIGHT || key.c == 'l')
+    {
+        if ( ! map->isWall(player->x+1,player->y)) {
+            player->x++;
+        }
     }
 }
 

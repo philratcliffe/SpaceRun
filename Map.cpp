@@ -15,7 +15,7 @@ private:
 public:
     BspListener(Map &map) : map(map), roomNum(0) {}
     bool visitNode(TCODBsp *node, void *userData) {
-    	if ( node->isLeaf() ) {    
+    	if ( node->isLeaf() ) {
     		int x,y,w,h;
 			// dig a room
 			TCODRandom *rng=TCODRandom::getInstance();
@@ -87,8 +87,10 @@ bool Map::isWall(int x, int y) const {
 }
  
 void Map::render() const {
+    static const TCODColor lightWall = TCODColor::white; 
     static const TCODColor darkWall = TCODColor::lightGrey; 
     static const TCODColor darkGround = TCODColor::black; 
+    static const TCODColor lightGround = TCODColor::darkerGrey; 
 
 	for (int x=0; x < width; x++) {
 	    for (int y=0; y < height; y++) {
