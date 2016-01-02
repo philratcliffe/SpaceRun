@@ -1,3 +1,4 @@
+#include<iostream>
 #include <stdio.h>
 #include "libtcod.hpp"
 #include "Map.hpp"
@@ -27,7 +28,15 @@ public:
 			h=rng->getInt(ROOM_MIN_SIZE, node->h-2);
 			x=rng->getInt(node->x+1, node->x+node->w-w-1);
 			y=rng->getInt(node->y+1, node->y+node->h-h-1);
-			map.createRoom(roomNum == 0, x, y, x+w-1, y+h-1);
+			map.createRoom(roomNum == 0, x, y, x+w-1, y+h-1, roomNum);
+            map.render();
+            //std::cin.get();
+            map.render();
+            int i = 0;
+            while (i < 100000000)
+            {
+                i++;
+            }
             printf("Middle of room: x=%d, y=%d\n", x+w/2, y+h/2);
 			if ( roomNum != 0 ) {
 			    // dig a corridor from last room
@@ -85,7 +94,7 @@ void Map::dig(int x1, int y1, int x2, int y2) {
     }
 }
 
-void Map::createRoom(bool first, int x1, int y1, int x2, int y2) {
+void Map::createRoom(bool first, int x1, int y1, int x2, int y2, int roomNum) {
     dig (x1,y1,x2,y2);
     if ( first ) {
         // put the player in the centre of the first room
@@ -97,6 +106,11 @@ void Map::createRoom(bool first, int x1, int y1, int x2, int y2) {
             engine.actors.push(new Actor((x1+x2)/2,(y1+y2)/2,'T',
                 TCODColor::yellow));
         }
+        char rn = '1' + roomNum;
+        engine.actors.push(new Actor((x1+x2)/2,(y1+y2)/2,
+            //Integer.ToString(roomNum),
+            rn,
+            TCODColor::yellow));
     }
 }
 

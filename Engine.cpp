@@ -14,8 +14,8 @@ Engine::Engine() {
     m_playerColor = TCODColor::lightestGreen; 
     player = new Actor(40,25,'@', m_playerColor);
     actors.push(player);
-    map = new Map(80,45);
     TCODSystem::setFps(20);
+    map = new Map(80,45);
 }
 
 Engine::~Engine() {
