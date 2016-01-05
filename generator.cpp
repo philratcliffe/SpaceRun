@@ -32,6 +32,11 @@ struct Rect
 	int width, height;
 };
 
+struct Point
+{
+    int x, y;
+};
+
 class Dungeon
 {
 public:
@@ -41,11 +46,16 @@ public:
 		Floor		= '.',
 		Corridor	= ',',
 		Wall		= '#',
-		ClosedDoor	= '+',
-		OpenDoor	= '-',
-		UpStairs	= '<',
-		DownStairs	= '>'
 	};
+ 
+	enum Direction
+	{
+		North,
+		South,
+		West,
+		East,
+	};
+ 
 
 public:
 	Dungeon(int width, int height)
@@ -66,6 +76,36 @@ public:
         }
     }
 
+    Point getRandomRoomPoint()
+    {
+        //
+        // Get a random room
+        //
+		int r = randomInt(_rooms.size());
+        Rect room = _rooms[r];
+        Point p;
+
+        //
+        // Choose a random location in the room
+        //
+        p.x = randomInt(room.x, room.x + room.width - 1);
+        p.y = randomInt(room.y, room.y + room.height - 1);
+        return p;
+
+    }
+
+    void makeCorridor(int x, int y, Direction dir)
+    {
+        for (int i = 0; i < 20; i++)
+        {
+            setTile(x, y, Floor);
+            if (dir == West)
+                x++;
+            else
+                x--;
+        }
+    }
+
 	void generate()
 	{
 		// place the first room in the center
@@ -77,20 +117,11 @@ public:
 
         for (int i = 0; i < 1; i++)
         {
-            // Select a random location on the map.
-            //int x = randomInt(_width);
-            //int y = randomInt(_height);
-            Rect room = _rooms[_rooms.size() - 1];
-			int x = randomInt(room.x, room.x + room.width - 1);
-			int y = randomInt(room.y, room.y + room.height - 1);
-            printf("x %d", x);
-            printf("y %d", y);
-            for (i = 0; i < 10; i++)
-            {
-                setTile(x, y, 'z');
-                x = x + 1;
-            }
-            //makeCorridor();
+            Point p = getRandomRoomPoint();
+            makeCorridor(p.x, p.y, West);
+		    makeRoom(p.x, p.y - 1);
+            setTile(p.x - 1, p.y, Floor);
+
         }
 
 		for (char& tile : _tiles)
@@ -129,15 +160,17 @@ private:
 
 	bool makeRoom(int x, int y, bool firstRoom = false)
 	{
-		static const int minRoomSize = 5;
-		static const int maxRoomSize = 8;
+		static const int minRoomSize = 4;
+		static const int maxRoomSize = 7;
 
 		Rect room;
+        room.x = x;
+        room.y = y;
 		room.width = randomInt(minRoomSize, maxRoomSize);
 		room.height = randomInt(minRoomSize, maxRoomSize);
 
-        room.x = x - room.width;
-	    room.y = y - room.height;
+        //room.x = x - room.width;
+	    //room.y = y - room.height;
 
 		if (placeRect(room, Floor))
         {
@@ -150,23 +183,36 @@ private:
 
 	bool placeRect(const Rect& rect, char tile)
 	{
+        printf("placeRect: entry");
         // Check not too near edge of map
 		if (rect.x < 2 || rect.y < 2 ||
                 rect.x + rect.width >= _width - 1 || rect.y + rect.height >= _height - 1)
+        {
+            printf("Too near edge");
 			return false;
+        }
 
         // Now check no other room near where we want to build
-		for (int y = rect.y - 3; y < rect.y + rect.height + 3; ++y)
-			for (int x = rect.x - 4; x < rect.x + rect.width + 4; ++x)
+		for (int y = rect.y; y < rect.y + rect.height; ++y)
+			for (int x = rect.x; x < rect.x + rect.width; ++x)
 			{
-				if (getTile(x, y) != Unused)
+                char t = getTile(x, y);
+                if (t != Unused && t != Floor)
+                {
+
+					setTile(x, y, 'P');
+                    printf("NOT UNUSED");
 					return false; // the area already used
+                } 
 			}
 
+        setTile(rect.x, rect.y, 'P');
 		for (int y = rect.y - 1; y < rect.y + rect.height + 1; ++y)
 			for (int x = rect.x - 1; x < rect.x + rect.width + 1; ++x)
 			{
-				if (x == rect.x - 1 || y == rect.y - 1 || x == rect.x + rect.width || y == rect.y + rect.height)
+				if (x == rect.x - 1 || y == rect.y - 1 
+                        || x == rect.x + rect.width 
+                        || y == rect.y + rect.height)
 					setTile(x, y, Wall);
 				else
 					setTile(x, y, tile);
