@@ -2,6 +2,15 @@
 #include <vector>
 #include <iostream>
 
+//
+// Draw a central corridor
+// Move to random locartion along corridor (say between 5 and 10% of last
+// location) 
+// Select a random room size
+// Select a random number of rooms
+// Put same number of rooms either side of the corridor at location
+// join these rooms by a corridor
+//
 namespace
 {
 	std::random_device rd;
@@ -94,9 +103,9 @@ public:
 
     }
 
-    void makeCorridor(int x, int y, Direction dir)
+    void makeCorridor(int x, int y, Direction dir, int length)
     {
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < length; i++)
         {
             setTile(x, y, Floor);
             if (dir == West)
@@ -108,7 +117,12 @@ public:
 
 	void generate()
 	{
+        //
+        //
+        makeCorridor(2, _height / 2,  West, _width - 4);
+
 		// place the first room in the center
+        /*
 		if (!makeRoom(_width / 2, _height / 2, true))
 		{
 			std::cout << "Unable to place the first room.\n";
@@ -123,6 +137,7 @@ public:
             setTile(p.x - 1, p.y, Floor);
 
         }
+        */
 
 		for (char& tile : _tiles)
 		{
