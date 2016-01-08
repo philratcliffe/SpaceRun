@@ -103,11 +103,19 @@ public:
 
     }
 
-    void makeCorridor(int x, int y, Direction dir, int length)
+    void makeVerticalCorridor(int x, int y, int length)
+    {
+
+
+    }
+
+    void makeCentralCorridor(int x, int y, Direction dir, int length)
     {
         for (int i = 0; i < length; i++)
         {
             setTile(x, y, Floor);
+            setTile(x, y+1, Wall);
+            setTile(x, y-1, Wall);
             if (dir == West)
                 x++;
             else
@@ -218,15 +226,15 @@ private:
 					setTile(x, y, 'P');
                     printf("NOT UNUSED");
 					return false; // the area already used
-                } 
+                }
 			}
 
         setTile(rect.x, rect.y, 'P');
 		for (int y = rect.y - 1; y < rect.y + rect.height + 1; ++y)
 			for (int x = rect.x - 1; x < rect.x + rect.width + 1; ++x)
 			{
-				if (x == rect.x - 1 || y == rect.y - 1 
-                        || x == rect.x + rect.width 
+				if (x == rect.x - 1 || y == rect.y - 1
+                        || x == rect.x + rect.width
                         || y == rect.y + rect.height)
 					setTile(x, y, Wall);
 				else
